@@ -34,7 +34,8 @@ void Cam_Algorithm();
 void Cam_Init();
 
 //==============CAM_B===========
-#define CAM_WID 132//摄像头有效宽度//与摄像头安放位置有关//120//132
+#define CAM_WID 96//摄像头有效宽度//与摄像头安放位置有关//120//132
+#define WID 96
 #define thr 70//黑白阈值，目前无需调
 #define ROAD_WID 30//道路宽度，未知，需要在透视变换后使用、、、、、、、、、、
 #define Dir_Kp 4    //舵机比例控制参数
