@@ -493,7 +493,10 @@ void Cam_B(){
       PWM(motor_L, motor_R, &L, &R);               //后轮速度
     }
    else
-     PWM(0, 0, &L, &R);
+    PWM(0, 0, &L, &R);
+//   {MotorL_Output(0);
+//   MotorR_Output(0);
+//   }
     
     //方案二//暂时放弃
     //C=getR(road_B[c1].mid,20-c1,road_B[c2].mid,20-c2,road_B[c3].mid,20-c3);

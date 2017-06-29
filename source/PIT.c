@@ -45,7 +45,7 @@ void PID_Init()
   R.errSum=0;
 
   //¡Ÿ ±≤‚ ‘”√£∫
-  debug_dir.kp=0;
+  debug_dir.kp=1.8;
   debug_dir.kd=0;
   
 }
