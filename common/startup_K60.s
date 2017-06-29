@@ -333,7 +333,7 @@ __Vectors_Size 	EQU   __Vectors_End - __Vectors
         SECTION .noinit:CODE:REORDER(2)
 ;复位函数
 Reset_Handler
-z        LDR     R0, =SystemInit         ;执行系统初始化函数SystemInit()
+        LDR     R0, =SystemInit         ;执行系统初始化函数SystemInit()
         BLX     R0
         LDR     R0, =main               ;执行用户主函数main()
         BX      R0
