@@ -478,12 +478,12 @@ void Cam_B(){
         else motor_L=constrain(MIN_SPEED,motor_L,motor_L*0.9);//0.9
       }
       else if(abs(dir)<185){    
-        motor_L=motor_R=max_speed-0.3*range-0.33*range*(abs(dir)-95)/90;
+        motor_L=motor_R=max_speed-0.33*range-0.3*range*(abs(dir)-95)/90;
         if(dir>0) motor_R=constrain(MIN_SPEED,motor_R,motor_R*0.8);//右转
         else motor_L=constrain(MIN_SPEED,motor_L,motor_L*0.8);//0/75
       }
       else if(abs(dir)<230){
-        motor_L=motor_R=max_speed-0.6*range-0.33*range*(abs(dir)-185)/45;
+        motor_L=motor_R=max_speed-0.66*range-0.3*range*(abs(dir)-185)/45;
         if(dir>0) motor_R=constrain(MIN_SPEED,motor_R,motor_R*0.7);//右转
         else motor_L=constrain(MIN_SPEED,motor_L,motor_L*0.7);//0.5
       }//以上的差速控制参数未确定，调参时以车辆稳定行驶为目标
