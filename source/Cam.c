@@ -20,7 +20,7 @@ float weight[4][10] ={ {0,0,0,0,0,0,0,0,0,0},
                         {1.00,1.03,1.14,1.54,2.56,               4.29,6.16,7.00,6.16,4.29},
                         {1.118, 1.454, 2.296, 3.744, 5.304,      6.000, 5.304, 3.744, 2.296, 1.454}};
 int valid_row=0;//与有效行相关，未有效识别
-int valid_row_thr=10;//有效行阈值
+int valid_row_thr=19;//有效行阈值
 u8 car_state=0;//智能车状态标志 0：停止  1：测试舵机  2：正常巡线
 u8 remote_state = 0;//远程控制
 u8 road_state = 0;//前方道路状态 1、直道   2、弯道  3、环岛  4、障碍
@@ -505,26 +505,26 @@ void Cam_B(){
         road_state=4;
     }*/
     
-  /*  //=============================根据前方道路类型，选择不同的权值weight
+    //=============================根据前方道路类型，选择不同的权值weight
      switch(road_state)
     {
       case 1: 
-        for(int i=0;i<10;i++)weight[i]=1;//均匀分布的权值
+        //for(int i=0;i<10;i++)weight[i]=1;//均匀分布的权值
         break;
       case 2:
         max_speed=MAX_SPEED-5;//减多少未定，取决于弯道最高速度
-        float weight2[10] = {1.00,1.03,1.14,1.54,2.56,4.29,6.16,7.00,6.16,4.29};
-        for(int i;i<10;i++) weight[i] = weight2[i];//正态分布的权值
+        //float weight2[10] = {1.00,1.03,1.14,1.54,2.56,4.29,6.16,7.00,6.16,4.29};
+        //for(int i;i<10;i++) weight[i] = weight2[i];//正态分布的权值
         break;
       case 3:
-        max_speed=MAX_SPEED-5;
-        float  weight3[10] = {1.118, 1.454, 2.296, 3.744, 5.304, 6.000, 5.304, 3.744, 2.296, 1.454};//未确定
-        for(int i;i<10;i++) weight[i] = weight2[i];
+        max_speed=MAX_SPEED-15;
+       //// float  weight3[10] = {1.118, 1.454, 2.296, 3.744, 5.304, 6.000, 5.304, 3.744, 2.296, 1.454};//未确定
+       // for(int i;i<10;i++) weight[i] = weight2[i];
         break;
       case 4:
         break;
       default:break;
-    }*/
+    }
     
     //================================对十行mid加权：
     float weight_sum=0;
@@ -548,10 +548,10 @@ void Cam_B(){
     dir=constrainInt(-230,230,dir);
     if(car_state!=0)
     
-        if (road_state==3) dir=-200;
+    {   if (road_state==3) dir=-200;
  
         Servo_Output(dir);
-    
+    }
     else   
       Servo_Output(0);
     
@@ -564,8 +564,18 @@ void Cam_B(){
     //PWM以dir为参考，前期分级控制弯道速度；中期分段线性控速；后期找到合适参数的时候，再进行拟合——PWM关于dir的函数
     float range=max_speed-MIN_SPEED;//速度范围大小 
     if(car_state==2 ){
-      //分段线性控速
-      if(abs(dir)<50 ){//&& valid_row>valid_row_thr
+      
+      if (road_state==3) {motor_L=0;motor_R=5;}
+      
+      else if (valid_row>valid_row_thr) motor_L=motor_R=max_speed+5; //此处设为maxspeed有可能加速不够激进
+      
+      else if (valid_row<valid_row_thr&&valid_row>=valid_row_thr-5&&(tacho1-tacho0)/2>MIN_SPEED) // tacho1_thr 为目标进弯速度 此处设置下界是为了防止过减速，如果去掉则会让
+                                                                                        //   tacho1_thr成为除了高速段的速度最大值 具体下界为多少还是需要调试
+        motor_L=motor_R=0;
+      
+       //进入下一层的dir-speed的控制
+                 //分段线性控速
+      else if(abs(dir)<50 ){//&& valid_row>valid_row_thr
         motor_L=motor_R=max_speed;
       }
       else if(abs(dir)<95){
@@ -588,11 +598,12 @@ void Cam_B(){
       }
       PWM(motor_L, motor_R, &L, &R);               //后轮速度
     }
+    
    else
-//    PWM(0, 0, &L, &R);
-   {MotorL_Output(0);
-   MotorR_Output(0);
-   }
+   PWM(0, 0, &L, &R);
+//   {MotorL_Output(0);
+//   MotorR_Output(0);
+//   }
     
     //方案二//暂时放弃
     //C=getR(road_B[c1].mid,20-c1,road_B[c2].mid,20-c2,road_B[c3].mid,20-c3);
