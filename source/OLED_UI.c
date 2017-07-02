@@ -124,7 +124,8 @@ void displayParameters()//menu==1
       {"weight[road_state][0]",weight[road_state][0]*10},      {"weight[road_state][1]",weight[road_state][1]*10},        {"weight[road_state][2]",weight[road_state][2]*10},
       {"weight[road_state][3]",weight[road_state][3]*10},      {"weight[road_state][4]",weight[road_state][4]*10},        {"weight[road_state][5]",weight[road_state][5]*10},
       {"weight[road_state][6]",weight[road_state][6]*10},      {"weight[road_state][7]",weight[road_state][6]*10},        {"weight[road_state][8]",weight[road_state][8]*10},
-      {"weight[road_state][9]",weight[road_state][9]*10},          {"",0}
+      {"weight[road_state][9]",weight[road_state][9]*10},          
+      {"frontwhite",frontwhite},{"isblackrec",isblackrec},{"iswhitefour",iswhitefour},{"",},{"",},{"",}
     }
    /* {
       {"cam_buf[60]",cam_buffer[60][60]},

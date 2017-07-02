@@ -27,6 +27,12 @@ u8 road_state = 0;//前方道路状态 1、直道   2、弯道  3、环岛  4、障碍
                   //3 4 状态下权重拉近
                   //2 状态下减速
 
+int pixinwhite=0;
+int frontwhite=0;
+int frontblack=0;
+int isblackrec=0;
+int iswhitefour=0;
+
 float motor_L=MIN_SPEED;
 float motor_R=MIN_SPEED;
 
@@ -237,7 +243,67 @@ void Cam_B_Init()//初始化Cam_B
 double theta,theta_d,slope,test;
 double x,y;
 
-  //第一次进化版巡线程序
+bool findblackrec()
+{
+    int left=WID/2-CenterRows;
+    int right=WID/2+CenterRows;
+    int up=30-CenterLines;
+    int down=30+CenterLines;
+    for (int i=up;i<down;i++)
+    {
+      if (cam_buffer[i][left]>thr)  return 0;
+    }
+    for (int i=up;i<down;i++)
+    {
+      if (cam_buffer[i][right]>thr) return 0;
+    }
+    for (int j=left;j>right;j++)
+    {
+      if (cam_buffer[up][j]>thr) return 0;
+    }
+    for (int j=left;j>right;j++)
+    {
+      if (cam_buffer[down][j]>thr) return 0;
+    }
+    return 1;
+}
+  
+
+bool whitefour()
+{
+    int left=WID/2-CenterRows;
+    int right=WID/2+CenterRows;
+    int up=30-CenterLines;
+    int down=30+CenterLines;
+    bool flag1=1,flag2=0,flag3=0,flag4=0;
+
+    for (int i=down;i<62;i++)
+    {
+      if (cam_buffer[i][left]>thr&&cam_buffer[i][right]>thr)
+      {
+        flag2=1;break;
+      }
+    }
+    for ( int j=left;j>0;j--)
+    {
+      if (cam_buffer[up][j]>thr&&cam_buffer[down][j]>thr)
+      {
+        flag3=1;break;
+      }
+    }
+    for ( int j=right;j<WID;j++)
+    {
+      if (cam_buffer[up][j]>thr&&cam_buffer[down][j]>thr)
+      {
+        flag4=1; break;
+      }
+    }
+    if (flag1&&flag2&&flag3&&flag4) return 1;
+    else return 0;
+    
+}
+
+//第一次进化版巡线程序
 void Cam_B(){
   
     //===================变量定义====================
@@ -335,6 +401,28 @@ void Cam_B(){
         road_B[j+1].mid=road_B[j].mid;//后一行从前一行中点开始扫描
     }
       
+// 1.先检查检测白线部分的算法是否有效
+    int pixinwhite=0;
+    for (int j=0;j<5;j++)
+    {
+      int white=0;
+      for (int i=0;i<WID;i++)
+      {
+        if (cam_buffer[j][i]>thr) white++;
+      }
+      pixinwhite+=white;
+    }
+    pixinwhite/=5;
+    if (pixinwhite>WID*0.6) frontwhite=1;
+    else frontwhite=0;
+    
+//2.再检查黑块的识别部分的算法是否有效
+    
+    isblackrec=findblackrec();
+//3.除了中间部分的黑块还需要的条件是往两侧还有白块
+    
+    iswhitefour=whitefour();
+
     //===========================区分前方道路类型//需要设置一个优先级！！！
     static int mid_ave3;
     bool flag_valid_row=0;
@@ -348,10 +436,11 @@ void Cam_B(){
       }
       else valid_row=ROAD_SIZE-3;
     }
-    if(valid_row<valid_row_thr)
+    if (iswhitefour&&isblackrec) road_state=3;
+    else if(valid_row<valid_row_thr)
       road_state=2;//弯道
     else road_state=1;//直道
-    //detect the black hole————————————————————
+/*    //detect the black hole————————————————————
     int left=0,right=0;
     if(cam_buffer[CAM_HOLE_ROW][CAM_WID/2]<thr)
     {
@@ -380,7 +469,7 @@ void Cam_B(){
     }
     if(left>=1 && right>=1)
       road_state=3;//前方环岛
-    //detect the obstacle————————————————————
+*/    //detect the obstacle————————————————————
   /*  if((road_B[ROAD_OBST_ROW].right-road_B[ROAD_OBST_ROW].left)<OBSTACLE_THR)
     {
       int i=road_B[ROAD_OBST_ROW].mid;
@@ -458,11 +547,18 @@ void Cam_B(){
     
     dir=constrainInt(-230,230,dir);
     if(car_state!=0)
-      Servo_Output(dir);
+    
+        if (road_state==3) dir=-200;
+ 
+        Servo_Output(dir);
+    
     else   
       Servo_Output(0);
     
     
+      
+        
+     
     
     //==============速度控制=================
     //PWM以dir为参考，前期分级控制弯道速度；中期分段线性控速；后期找到合适参数的时候，再进行拟合——PWM关于dir的函数

@@ -35,6 +35,7 @@ void Cam_Init();
 
 //==============CAM_B===========
 #define CAM_WID 132//摄像头有效宽度//与摄像头安放位置有关//120//132
+#define WID 132
 #define thr 70//黑白阈值，目前无需调
 #define ROAD_WID 30//道路宽度，未知，需要在透视变换后使用、、、、、、、、、、
 #define Dir_Kp 5    //舵机比例控制参数
@@ -93,7 +94,15 @@ void linearization();
 void multiply(int k);
 void matrixMultiply();
 void getNewBuffer();*/
-//——————
+
+extern int pixinwhite;
+extern int frontwhite;
+extern int isblackrec;
+extern int iswhitefour;
+#define CenterLines 12; //在屏幕的中心划出一个长方形，沿着长方形的边去检查是否都为黑点
+#define CenterRows 15; 
+  
+  //——————
 
 //test
 extern double theta;
