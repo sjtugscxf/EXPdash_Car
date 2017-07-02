@@ -473,17 +473,17 @@ void Cam_B(){
         motor_L=motor_R=max_speed;
       }
       else if(abs(dir)<95){
-        motor_L=motor_R=max_speed-0.33*range*(abs(dir)-50)/45;
+        motor_L=motor_R=max_speed-0.4*range*(abs(dir)-50)/45;
         if(dir>0) motor_R=constrain(MIN_SPEED,motor_R,motor_R*0.9);//右转
         else motor_L=constrain(MIN_SPEED,motor_L,motor_L*0.9);//0.9
       }
       else if(abs(dir)<185){    
-        motor_L=motor_R=max_speed-0.33*range-0.33*range*(abs(dir)-95)/90;
+        motor_L=motor_R=max_speed-0.3*range-0.33*range*(abs(dir)-95)/90;
         if(dir>0) motor_R=constrain(MIN_SPEED,motor_R,motor_R*0.8);//右转
         else motor_L=constrain(MIN_SPEED,motor_L,motor_L*0.8);//0/75
       }
       else if(abs(dir)<230){
-        motor_L=motor_R=max_speed-0.66*range-0.33*range*(abs(dir)-185)/45;
+        motor_L=motor_R=max_speed-0.6*range-0.33*range*(abs(dir)-185)/45;
         if(dir>0) motor_R=constrain(MIN_SPEED,motor_R,motor_R*0.7);//右转
         else motor_L=constrain(MIN_SPEED,motor_L,motor_L*0.7);//0.5
       }//以上的差速控制参数未确定，调参时以车辆稳定行驶为目标
@@ -493,10 +493,10 @@ void Cam_B(){
       PWM(motor_L, motor_R, &L, &R);               //后轮速度
     }
    else
-    PWM(0, 0, &L, &R);
-//   {MotorL_Output(0);
-//   MotorR_Output(0);
-//   }
+//    PWM(0, 0, &L, &R);
+   {MotorL_Output(0);
+   MotorR_Output(0);
+   }
     
     //方案二//暂时放弃
     //C=getR(road_B[c1].mid,20-c1,road_B[c2].mid,20-c2,road_B[c3].mid,20-c3);
