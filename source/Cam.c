@@ -15,8 +15,10 @@ Road road_B[ROAD_SIZE];//由近及远存放
 float mid_ave;//road中点加权后的值
 //float  weight[10] = {1,1,1.118, 1.454, 2.296, 3.744, 5.304, 6.000, 5.304, 3.744}; //2.296};//, 1.454};//上一次的权值
 //float weight[10] = {1.04,1.14,1.41,2.01,3.03,4.35,5.52,6,5.52,4.35};//待测试
-float weight[4][10] ={ {0,0,0,0,0,0,0,0,0,0},
+float weight[4][10] ={ //{0,0,0,0,0,0,0,0,0,0},
                         {1,1,1,1,1,1,1,1,1,1},
+                         //{1.00,1.03,1.14,1.54,2.56,               4.29,6.16,7.00,6.16,4.29},
+                        {2.00,3,4,5,5,               2.2,2.16,2.00,2.16,2.29},  
                         {1.00,1.03,1.14,1.54,2.56,               4.29,6.16,7.00,6.16,4.29},
                         {1.118, 1.454, 2.296, 3.744, 5.304,      6.000, 5.304, 3.744, 2.296, 1.454}};
 int valid_row=0;//与有效行相关，未有效识别
@@ -303,6 +305,14 @@ bool whitefour()
     
 }
 
+bool allblack()
+{
+  for (int i=0;i<WID;i++)
+  {
+    if (cam_buffer[60][i]>thr||cam_buffer[58][i]>thr)  return 0;
+  }
+  return 1;
+}
 //第一次进化版巡线程序
 void Cam_B(){
   
@@ -310,7 +320,7 @@ void Cam_B(){
   
     float max_speed=MAX_SPEED+debug_speed;//最大速度
     static int dir;//舵机输出
-    
+    static int last_dir;
     //================================透视变化
     //getMatrix(0.785398,1.0,1.0,1000);
    // linearization();
@@ -440,6 +450,12 @@ void Cam_B(){
     else if(valid_row<valid_row_thr)
       road_state=2;//弯道
     else road_state=1;//直道
+    
+    
+
+    
+        
+      
 /*    //detect the black hole————————————————————
     int left=0,right=0;
     if(cam_buffer[CAM_HOLE_ROW][CAM_WID/2]<thr)
@@ -546,16 +562,19 @@ void Cam_B(){
     last_err = err;
     
     dir=constrainInt(-230,230,dir);
+    if (allblack()) dir=last_dir;
+    
     if(car_state!=0)
     
     {   if (road_state==3) dir=-200;
+        
  
         Servo_Output(dir);
     }
     else   
       Servo_Output(0);
     
-    
+    last_dir=dir;
       
         
      
@@ -600,10 +619,10 @@ void Cam_B(){
     }
     
    else
-   PWM(0, 0, &L, &R);
-//   {MotorL_Output(0);
-//   MotorR_Output(0);
-//   }
+   //PWM(0, 0, &L, &R);
+   {MotorL_Output(0);
+   MotorR_Output(0);
+  }
     
     //方案二//暂时放弃
     //C=getR(road_B[c1].mid,20-c1,road_B[c2].mid,20-c2,road_B[c3].mid,20-c3);
