@@ -512,7 +512,7 @@ void Cam_B(){
         //for(int i=0;i<10;i++)weight[i]=1;//均匀分布的权值
         break;
       case 2:
-        max_speed=MAX_SPEED-5;//减多少未定，取决于弯道最高速度
+        max_speed=MAX_SPEED-8;//减多少未定，取决于弯道最高速度
         //float weight2[10] = {1.00,1.03,1.14,1.54,2.56,4.29,6.16,7.00,6.16,4.29};
         //for(int i;i<10;i++) weight[i] = weight2[i];//正态分布的权值
         break;
@@ -545,10 +545,10 @@ void Cam_B(){
       dir*=1.2;//修正舵机左右不对称的问题//不可删
     last_err = err;
     
-    dir=constrainInt(-230,230,dir);
+    dir=constrainInt(-300,300,dir);
     if(car_state!=0)
     
-    {   if (road_state==3) dir=-200;
+    {   if (road_state==3||frontwhite==1) dir=-200;
  
         Servo_Output(dir);
     }
@@ -565,7 +565,7 @@ void Cam_B(){
     float range=max_speed-MIN_SPEED;//速度范围大小 
     if(car_state==2 ){
       
-      if (road_state==3) {motor_L=0;motor_R=5;}
+      if (road_state==3||frontwhite==1) {motor_L=-3;motor_R=-3;}
       
       else if (valid_row>valid_row_thr) motor_L=motor_R=max_speed+5; //此处设为maxspeed有可能加速不够激进
       
@@ -579,17 +579,17 @@ void Cam_B(){
         motor_L=motor_R=max_speed;
       }
       else if(abs(dir)<95){
-        motor_L=motor_R=max_speed-0.4*range*(abs(dir)-50)/45;
+        motor_L=motor_R=max_speed-0.5*range*(abs(dir)-50)/45;
         if(dir>0) motor_R=constrain(MIN_SPEED,motor_R,motor_R*0.9);//右转
         else motor_L=constrain(MIN_SPEED,motor_L,motor_L*0.9);//0.9
       }
       else if(abs(dir)<185){    
-        motor_L=motor_R=max_speed-0.33*range-0.3*range*(abs(dir)-95)/90;
+        motor_L=motor_R=max_speed-0.33*range-0.2*range*(abs(dir)-95)/90;
         if(dir>0) motor_R=constrain(MIN_SPEED,motor_R,motor_R*0.8);//右转
         else motor_L=constrain(MIN_SPEED,motor_L,motor_L*0.8);//0/75
       }
       else if(abs(dir)<230){
-        motor_L=motor_R=max_speed-0.66*range-0.3*range*(abs(dir)-185)/45;
+        motor_L=motor_R=max_speed-0.66*range-0.2*range*(abs(dir)-185)/45;
         if(dir>0) motor_R=constrain(MIN_SPEED,motor_R,motor_R*0.7);//右转
         else motor_L=constrain(MIN_SPEED,motor_L,motor_L*0.7);//0.5
       }//以上的差速控制参数未确定，调参时以车辆稳定行驶为目标
@@ -600,10 +600,10 @@ void Cam_B(){
     }
     
    else
-   PWM(0, 0, &L, &R);
-//   {MotorL_Output(0);
-//   MotorR_Output(0);
-//   }
+//   PWM(0, 0, &L, &R);
+   {MotorL_Output(0);
+   MotorR_Output(0);
+   }
     
     //方案二//暂时放弃
     //C=getR(road_B[c1].mid,20-c1,road_B[c2].mid,20-c2,road_B[c3].mid,20-c3);

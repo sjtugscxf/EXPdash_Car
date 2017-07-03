@@ -38,10 +38,10 @@ void Cam_Init();
 #define WID 132
 #define thr 70//黑白阈值，目前无需调
 #define ROAD_WID 30//道路宽度，未知，需要在透视变换后使用、、、、、、、、、、
-#define Dir_Kp 5    //舵机比例控制参数
-#define Dir_Kd 23  //舵机微分控制参数
-#define MAX_SPEED 23 //直道最大速度/////////////////////////26为现在的极限
-#define MIN_SPEED 15 //弯道最大速度////////////////////////不确定
+#define Dir_Kp 6    //舵机比例控制参数
+#define Dir_Kd 25  //舵机微分控制参数
+#define MAX_SPEED 19 //直道最大速度/////////////////////////26为现在的极限
+#define MIN_SPEED 14 //弯道最大速度////////////////////////不确定
 #define ROAD_SIZE 25 //利用的摄像头数据行数
 #define WEIGHT_SIZE 10 //实际加权并控制舵机的行数
 #define MaxWeight_index 7 //最大weight的下标，范围是0-9
